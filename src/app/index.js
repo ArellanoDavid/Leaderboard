@@ -2,40 +2,57 @@ import React from "react";
 import { render } from "react-dom";
 import axios from "axios";
 
+import { Leaderboard } from "./components/Leaderboard"
+
 class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            username: []
+            recent: [],
+            allTime: [],
+            currentState: "test"
         }
     };
-    componentDidMount() {
-    axios.get("https://fcctop100.herokuapp.com/api/fccusers/top/alltime")
-        .then( res => {
-        console.log(res.data)
+
+    getRecent() {
+        return axios.get("https://fcctop100.herokuapp.com/api/fccusers/top/recent")
+    }
+
+    getAllTime() {
+        return axios.get("https://fcctop100.herokuapp.com/api/fccusers/top/alltime")
+    }
+
+    componentWillMount() {
+    axios.all([this.getRecent(), this.getAllTime()])
+        .then(axios.spread( (recent, allTime) => {
             this.setState({
-                username: res.data
-            });
-        })
+                recent: recent.data,
+                allTime: allTime.data,
+                currentState: recent.data
+            })
+        }))
     }
 
     render() {
         return (
             <div>
-                <div>
-                    {this.state.username.map(val => <li key={val.username}>{val.username}</li>)}
+                <div className="navbar navbar-default">
+                    <a
+                        className="navbar-brand"href="http://www.freecodecamp.com"
+                        target="_blank">FreeCodeCamp</a>
                 </div>
-                
-                <div>
-                    {this.state.username.map(val => <img key={val.username} src={val.img}/>)}
-                </div>
+                <button
+                    onClick={ () => this.setState({currentState: this.state.recent})}
+                    className="btn btn-primary">Recent
+                </button>
+                <button
+                    onClick={ () => this.setState({ currentState: this.state.allTime})}
+                    className="btn btn-primary">All Time
+                </button>
+                <div className="container">
+                    <Leaderboard campers={this.state.currentState}
 
-                <div>
-                    {this.state.username.map(val => <li key={val.username}>{val.alltime}</li>)}
-                </div>
-
-                <div>
-                    {this.state.username.map(val => <li key={val.username}>{val.recent}</li>)}
+                    />
                 </div>
             </div>
         )
