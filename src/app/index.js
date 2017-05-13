@@ -33,6 +33,18 @@ class App extends React.Component {
         }))
     }
 
+    changeToAllTime() {
+        this.setState({
+            currentState: this.state.allTime
+        })
+    }
+
+    changeToRecent() {
+        this.setState({
+            currentState: this.state.recent
+        })
+    }
+
     render() {
         return (
             <div>
@@ -41,18 +53,12 @@ class App extends React.Component {
                         className="navbar-brand"href="http://www.freecodecamp.com"
                         target="_blank">FreeCodeCamp</a>
                 </div>
-                <button
-                    onClick={ () => this.setState({currentState: this.state.recent})}
-                    className="btn btn-primary">Recent
-                </button>
-                <button
-                    onClick={ () => this.setState({ currentState: this.state.allTime})}
-                    className="btn btn-primary">All Time
-                </button>
                 <div className="container">
-                    <Leaderboard campers={this.state.currentState}
-
-                    />
+                    <Leaderboard
+                        campers={this.state.currentState}
+                        changeToAllTime={this.changeToAllTime.bind(this)}
+                        changeToRecent={this.changeToRecent.bind(this)}
+                     />
                 </div>
             </div>
         )
